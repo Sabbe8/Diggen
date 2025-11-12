@@ -1,0 +1,13 @@
+#!/bin/bash
+
+ehco "updatera"
+sudo apt update -y
+
+echo "upgradera system"
+sudo apt full-upgrade -y
+
+echo "rensa"
+sudo apt clean
+
+echo"starta om"
+sudo reboot
