@@ -4,7 +4,7 @@ import argparse
 import time
 
 def getMovement(src, dst):
-    speed = 0.00001
+    speed = 0.0001
     dst_x, dst_y = dst
     x, y = src
     direction = math.sqrt((dst_x - x)**2 + (dst_y - y)**2)
@@ -28,11 +28,12 @@ def run(id, current_coords, from_coords, to_coords, SERVER_URL):
 
     drone_coords = current_coords
 
+    # ================================
     # Move to pickup location
-    d_long, d_la = getMovement(drone_coords, from_coords)
+    # ================================
+    while math.dist(drone_coords, from_coords) > 0.0001:
 
-    while ((from_coords[0] - drone_coords[0])**2 +
-           (from_coords[1] - drone_coords[1])**2) * 10**6 > 0.0002:
+        d_long, d_la = getMovement(drone_coords, from_coords)
 
         drone_coords = moveDrone(drone_coords, d_long, d_la)
 
@@ -46,11 +47,12 @@ def run(id, current_coords, from_coords, to_coords, SERVER_URL):
         requests.post(SERVER_URL, json=drone_info)
         time.sleep(0.1)
 
+    # ================================
     # Move to delivery location
-    d_long, d_la = getMovement(drone_coords, to_coords)
+    # ================================
+    while math.dist(drone_coords, to_coords) > 0.0001:
 
-    while ((to_coords[0] - drone_coords[0])**2 +
-           (to_coords[1] - drone_coords[1])**2) * 10**6 > 0.0002:
+        d_long, d_la = getMovement(drone_coords, to_coords)
 
         drone_coords = moveDrone(drone_coords, d_long, d_la)
 
@@ -64,7 +66,9 @@ def run(id, current_coords, from_coords, to_coords, SERVER_URL):
         requests.post(SERVER_URL, json=drone_info)
         time.sleep(0.1)
 
-    # Delivery completed → set status to idle
+    # ================================
+    # Delivery completed → set idle
+    # ================================
     drone_info = {
         'id': id,
         'longitude': drone_coords[0],
